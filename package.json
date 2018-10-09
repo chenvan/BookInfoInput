@@ -4,6 +4,9 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.1.1",
+    "electron-reload": "^1.2.5",
+    "lowdb": "^1.0.0",
+    "node-fetch": "^2.2.0",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-scripts": "1.1.5"
@@ -27,12 +30,10 @@
     "postinstall": "install-app-deps"
   },
   "build": {
-    "appId": "com.electron.book-info-input",
-    "win": {
-      "iconUrl": "https://cdn2.iconfinder.com/data/icons/designer-skills/128/react-256.png"
-    },
+    "appId": "com.electron.bookInfoInput",
     "directories": {
       "buildResources": "public"
-    }
+    },
+    "extends": null
   }
 }

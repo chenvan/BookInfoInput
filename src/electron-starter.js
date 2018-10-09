@@ -1,11 +1,22 @@
-const electron = require('electron');
-// Module to control application life.
-const app = electron.app;
-// Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow;
+const electron = require('electron')
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
+const ipcMain = electron.ipcMain
 
-const path = require('path');
-const url = require('url');
+const path = require('path')
+const url = require('url')
+
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+const adapter = new FileSync('db.json')
+const db = low(adapter)
+
+console.log(__dirname)
+console.log(__filename)
+
+require('electron-reload')(path.join(__dirname, 'src', 'electron-start.js'), {
+    electron: path.join(__dirname, 'src', 'electron-wait-react.js')
+})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -13,15 +24,23 @@ let mainWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {webSecurity: false}
+    });
 
-    // and load the index.html of the app.
-    // ??????
+    // and load the index.html of the eapp.
+
     const startUrl = process.env.ELECTRON_START_URL || url.format({
         pathname: path.join(__dirname, '/../build/index.html'),
         protocol: 'file:',
         slashes: true
-      });
+    });
+    
+    // hardwire
+    // const startUrl = 'http://localhost:3000'
+
     mainWindow.loadURL(startUrl);
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
@@ -59,3 +78,13 @@ app.on('activate', function () {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.on('save-data', (event, isbn, data) => {
+    console.log(isbn)
+    if (db.has(isbn).value()) {
+        event.sender.send('save-data-reply', 'fail') 
+    } else {
+        db.set(isbn, data).write()
+        event.sender.send('save-data-reply', 'success')
+    }  
+})

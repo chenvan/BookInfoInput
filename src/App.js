@@ -1,114 +1,116 @@
-import React, { Component } from 'react';
-import './App.css';
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-const api = ''
+import React from 'react'
+// import { ipcRenderer } from 'electron'
 
-class App extends Component {
+import './App.css'
+import IsbnInput from './Component/IsbnInput'
+import BookInfo from './Component/BookInfo'
+
+const electron = window.require('electron')
+const ipcRenderer = electron.ipcRenderer
+
+const doubanAPI = 'https://api.douban.com/v2/book/isbn'
+const fetch = require('node-fetch') 
+
+export default class App extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      isbn: '',
-      bookOwner: '',
-      bookNumber: '',
-      bookTitle: '',
-      bookAuthor: '',
-      bookCoverUrl: '',
-      bookSummary: '',
       fetchSuccess: false,
+    }
+
+    this.bookInfo = {}
+
+    this.fetchInfo = this.fetchInfo.bind(this)
+    this.saveInfo = this.saveInfo.bind(this)
+    this.cancel = this.cancel.bind(this)
+  }
+
+
+  fetchInfo () {
+    let that = this
+    return function () {
+      // loading
+      // check isbn
+      return fetch(`${doubanAPI}/${this.state.isbn}`)
+        .then(res => res.json())
+        .then(info => {
+          that.bookInfo = {
+            isbn: this.state.isbn,
+            title: info.title,
+            author: info.author.map(author => author.replace(/\s+/g, '')).join(', '), //info.author is an array
+            summary: info.summary,
+            coverUrl: info.images.small,
+          }
+
+          that.setState({
+            fetchSuccess: true
+          })
+        })
+        .catch(err => {
+          // show error
+          // console.log('error:', err)
+          this.setState({
+            errorState: true
+          })
+        })
     }
   }
 
-  handleChange = name => event => {
-    this.setState({
-      [name]: event.target.value
-    })
+  saveInfo() {
+    // save info
+    return function () {
+      // loading
+      // check info
+      ipcRenderer.send('save-data', this.state.isbn, {
+        title: this.state.title,
+        author: this.state.author,
+        summary: this.state.summary,
+        type: this.state.type,
+        number: this.state.number,
+        owner: this.state.owner,
+        coverUrl: this.state.coverUrl
+      })
+      
+    }
   }
 
-  fetchInfo = () => {
-    this.setState({
-      fetchSuccess: true
-    })
-  }
-
-  saveInfo = () => {
+  cancel() {
     this.setState({
       fetchSuccess: false
     })
   }
 
+
+  componentDidMount() {
+    ipcRenderer.on('save-data-reply', (event, reply) => {
+      console.log(reply)
+      if (reply === 'success') {
+        this.setState({
+          fetchSuccess: false
+        })
+      } else {
+        // 
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    ipcRenderer.removeAllListeners()
+  }
+
   render() {
     return (
-      <form>
-        <TextField
-          id='isbn'
-          label='isbn号'
-          value={this.state.isbn}
-          onChange={this.handleChange('isbn')}
-          margin="normal"
+      this.state.fetchSuccess ?
+        <BookInfo 
+          bookInfo = {this.bookInfo}
+          saveInfo={this.saveInfo()}
+          cancel={this.cancel}
         />
-        <TextField
-          id='bookOwner'
-          label='书主'
-          value={this.state.bookOwner}
-          onChange={this.handleChange('bookOwner')}
-          margin="normal"
+          :
+        <IsbnInput 
+          fetchInfo = {this.fetchInfo()}
         />
-        <TextField
-          id='bookNumber'
-          label='本数'
-          value={this.state.bookNumber}
-          onChange={this.handleChange('bookNumber')}
-          margin="normal"
-          type="number"
-        />
-        {
-          !this.state.fetchSuccess ? 
-            <Button variant="outlined" onClick={this.fetchInfo}>
-              Ok
-            </Button> 
-              : 
-            (
-              <div>
-                <TextField
-                  id='bookTitle'
-                  label='书名'
-                  value={this.state.bookTitle}
-                  onChange={this.handleChange('bookTitle')}
-                  margin="normal"
-                />
-                <TextField
-                  id='bookAuthor'
-                  label='作者'
-                  value={this.state.bookAuthor}
-                  onChange={this.handleChange('bookAuthor')}
-                  margin="normal"
-                />
-                <TextField
-                  id='bookCoverUrl'
-                  label='封面链接'
-                  value={this.state.bookCoverUrl}
-                  onChange={this.handleChange('bookCoverUrl')}
-                  margin="normal"
-                />
-                <TextField
-                  id='bookSummary'
-                  label='简介'
-                  multiline
-                  value={this.state.bookSummary}
-                  onChange={this.handleChange('bookSummary')}
-                  margin="normal"
-                />
-                <Button variant="outlined" onClick={this.saveInfo}>
-                  Save
-                </Button>
-              </div>
-            )
-        }
-      </form>
     )
   }
 }
-
-export default App;
