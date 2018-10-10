@@ -1,5 +1,5 @@
 ## todo
-- hot reload electron ???
+- hot reload electron
 - 去除输入数据的前后空格
 - 修改文件名
 - 点击按钮后的loading

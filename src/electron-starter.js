@@ -11,12 +11,6 @@ const FileSync = require('lowdb/adapters/FileSync')
 const adapter = new FileSync('db.json')
 const db = low(adapter)
 
-console.log(__dirname)
-console.log(__filename)
-
-require('electron-reload')(path.join(__dirname, 'src', 'electron-start.js'), {
-    electron: path.join(__dirname, 'src', 'electron-wait-react.js')
-})
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

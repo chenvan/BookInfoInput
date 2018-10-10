@@ -1,16 +1,26 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import MenuItem from '@material-ui/core/MenuItem';
+import MenuItem from '@material-ui/core/MenuItem'
+// import book type 
 
 export default class BookInfo extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = this.props.bookInfo
-    this.state.type = ''
-    this.state.number = ''
-    this.state.owner = ''
+    this.state = {
+      ...this.props.bookInfo,
+      ...{
+        type: '',
+        number: '',
+        owner: '',
+        titleError: false,
+        authorError: false,
+        typeError: false,
+        numberError: false,
+        coverUrlError: false
+      }
+    }
 
     this.bookType = [
       '小说',
@@ -23,8 +33,12 @@ export default class BookInfo extends React.Component {
 
   handleChange = name => event => {
     this.setState({
-      [name]: event.target.value
+      [name]: event.target.value.trim()
     })
+  }
+
+  isBookInfoValid () {
+    return true
   }
 
   render() {
@@ -90,10 +104,16 @@ export default class BookInfo extends React.Component {
           margin="normal"
         />
         <img src={this.state.coverUrl} alt="封面" />
-        <Button variant="outlined" onClick={this.saveInfo}>
+        <Button
+          variant="outlined"
+          onClick={this.saveInfo}
+        >
           保存
         </Button>
-        <Button variant="outlined" onClick={this.props.cancel}>
+        <Button
+          variant="outlined"
+          onClick={this.props.cancel}
+        >
           取消
         </Button>
       </form>
