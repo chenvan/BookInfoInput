@@ -1,1 +1,48 @@
+#isbn-form, #book-info-form {
+  display: flex;
+}
 
+#isbn-form {
+  justify-content: center;
+  align-items: baseline;
+  margin-top: 160px;
+}
+
+#isbn-form button {
+  margin-left: 16px;
+}
+
+#book-info-form {
+  flex-direction: column;
+  margin-left: 16%;
+}
+
+#book-isbn {
+  margin-top: 32px;
+}
+
+.short {
+  width: 40%;
+  max-width: 300px;
+}
+
+.long {
+  width: 80%;
+  max-width: 700px;
+}
+
+img {
+  width: 40%;
+  max-width: 250px;
+  border: 2px dashed blue;
+  margin-top: 16px;
+}
+
+#button-zone {
+  display: flex;
+  margin: 16px 0;
+}
+
+#button-zone button {
+  margin-right: 16px;
+}

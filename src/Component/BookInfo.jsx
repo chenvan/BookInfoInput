@@ -2,8 +2,7 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
-// import book type 
-
+ 
 export default class BookInfo extends React.Component {
   constructor(props) {
     super(props)
@@ -32,7 +31,7 @@ export default class BookInfo extends React.Component {
   }
 
   handleChange = name => event => {
-    if (this.state[name + 'Error'] === true) {
+    if (this.state[name + 'Error']) {
       this.setState({
         [name + 'Error']: false
       })
@@ -44,10 +43,9 @@ export default class BookInfo extends React.Component {
   }
 
   isBookInfoValid () {
-    console.log('check book info')
-    console.log(this.state.type)
-    console.log(this.state.number)
     let errorName = ''
+    let doubanImgRe = /https:\/\/img1.doubanio.com\/view\/subject\/s\/public\/.*/
+
     if (this.state.title === '') {
       errorName = 'titleError'
     } else if (this.state.author === '') {
@@ -56,12 +54,11 @@ export default class BookInfo extends React.Component {
       errorName = 'typeError'
     } else if (isNaN(this.state.number) || this.state.number === '') {
       errorName = 'numberError'
-    } else if (this.state.coverUrl === '') {
-      // check coverUrl is valid
+    } else if (!doubanImgRe.test(this.state.coverUrl)) {
       errorName = 'coverUrlError'
     }
 
-    console.log(errorName)
+    // console.log(errorName)
     if (errorName !== '') {
       this.setState({
         [errorName]: true
@@ -74,35 +71,20 @@ export default class BookInfo extends React.Component {
 
   render() {
     return (
-      <form>
-        <div>{'Isbn: ' + this.state.isbn}</div>
-        <TextField
-          id='title'
-          label='书名'
-          value={this.state.title}
-          error={this.state.titleError}
-          onChange={this.handleChange('title')}
-          margin="normal"
-        />
-        <TextField
-          id='author'
-          label='作者'
-          value={this.state.author}
-          error={this.state.authorError}
-          onChange={this.handleChange('author')}
-          margin="normal"
-        />
-        <TextField
-          id='summary'
-          label='简介'
-          multiline
-          value={this.state.summary}
-          onChange={this.handleChange('summary')}
-          margin="normal"
+      <div id='book-info-form'>
+        <div id="book-isbn">{'ISBN: ' + this.state.isbn}</div>
+        <TextField 
+          id='owner'
+          label='书主'
+          className='short'
+          value={this.state.owner}
+          onChange={this.handleChange('owner')}
+          margin='normal'
         />
         <TextField 
           id='type'
           label='类型'
+          className='short'
           select
           value={this.state.type}
           error={this.state.typeError}
@@ -118,41 +100,65 @@ export default class BookInfo extends React.Component {
         <TextField 
           id='number'
           label='数量'
+          className='short'
           type='number'
           value={this.state.number}
           error={this.state.numberError}
           onChange={this.handleChange('number')}
           margin='normal'
         />
-        <TextField 
-          id='owner'
-          label='书主'
-          value={this.state.owner}
-          onChange={this.handleChange('owner')}
-          margin='normal'
+        <TextField
+          id='title'
+          label='书名'
+          className='short'
+          value={this.state.title}
+          error={this.state.titleError}
+          onChange={this.handleChange('title')}
+          margin="normal"
         />
+        <TextField
+          id='author'
+          label='作者'
+          className='short'
+          value={this.state.author}
+          error={this.state.authorError}
+          onChange={this.handleChange('author')}
+          margin="normal"
+        />
+        <TextField
+          id='summary'
+          label='简介'
+          className='long'
+          multiline
+          value={this.state.summary}
+          onChange={this.handleChange('summary')}
+          margin="normal"
+        />
+        <img src={this.state.coverUrl} alt="封面" />
         <TextField
           id='coverUrl'
           label='封面链接'
+          className='long'
           value={this.state.coverUrl}
           error={this.state.coverUrlError}
           onChange={this.handleChange('coverUrl')}
           margin="normal"
         />
-        <img src={this.state.coverUrl} alt="封面" />
-        <Button
-          variant="outlined"
-          onClick={this.saveInfo}
-        >
-          保存
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={this.props.cancel}
-        >
-          取消
-        </Button>
-      </form>
+        <div id='button-zone'>
+          <Button
+            variant="outlined"
+            onClick={this.saveInfo}
+          >
+            保存
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={this.props.cancel}
+          >
+            取消
+          </Button>
+        </div>
+      </div>
     )
   }
 }

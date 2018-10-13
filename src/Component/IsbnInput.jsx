@@ -32,7 +32,7 @@ export default class IsbnInput extends React.Component {
 
   render() {
     return (
-      <form>
+      <div id='isbn-form'>
         <TextField
           id='isbn'
           label='isbn号'
@@ -45,9 +45,9 @@ export default class IsbnInput extends React.Component {
           variant="outlined"
           onClick = {this.fetchInfo}
         >
-          Fetch
+          获取
         </Button>
-      </form>
+      </div>
     )
   }
 }

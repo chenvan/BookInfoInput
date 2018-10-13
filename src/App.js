@@ -187,7 +187,7 @@ export default class App extends React.Component {
             !this.state.loading && 
             <DialogActions>
               <Button variant="outlined" onClick = {this.handleClose}>
-                Cancel
+                取消
               </Button>
             </DialogActions>
           }
