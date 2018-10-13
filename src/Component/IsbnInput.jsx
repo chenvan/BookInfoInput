@@ -1,7 +1,6 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
 
 export default class IsbnInput extends React.Component {
   constructor(props) {
@@ -9,8 +8,7 @@ export default class IsbnInput extends React.Component {
 
     this.state = {
       isbn: '', 
-      errorState: false,
-      loading: false
+      errorState: false
     }
 
     this.fetchInfo = this.props.fetchInfo.bind(this)
@@ -29,7 +27,7 @@ export default class IsbnInput extends React.Component {
   }
 
   isIsbnValid (isbn) {
-    return true
+    return isbn.length === 13 && !isNaN(isbn)
   }
 
   render() {
@@ -46,16 +44,9 @@ export default class IsbnInput extends React.Component {
         <Button 
           variant="outlined"
           onClick = {this.fetchInfo}
-          disabled={this.state.loading}
         >
           Fetch
         </Button>
-        { 
-          this.state.loading &&
-          <CircularProgress
-            size={24}
-          />
-        }
       </form>
     )
   }

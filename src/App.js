@@ -3,8 +3,13 @@ import React from 'react'
 import './App.css'
 import IsbnInput from './Component/IsbnInput'
 import BookInfo from './Component/BookInfo'
+
+import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent';
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContentText from '@material-ui/core/DialogContentText'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const electron = window.require('electron')
 const ipcRenderer = electron.ipcRenderer
@@ -18,7 +23,9 @@ export default class App extends React.Component {
 
     this.state = {
       fetchSuccess: false,
-      open: false
+      loading: false,
+      open: false,
+      errMsg: '出错'
     }
 
     this.bookInfo = {}
@@ -35,14 +42,14 @@ export default class App extends React.Component {
     })
   }
   
-
   fetchInfo () {
     let that = this
 
     return function () {
       
-      this.setState({
-        loading: true
+      that.setState({
+        loading: true,
+        open: true,
       })
 
       if (this.isIsbnValid(this.state.isbn)) {
@@ -60,29 +67,37 @@ export default class App extends React.Component {
               }
   
               that.setState({
-                fetchSuccess: true
+                fetchSuccess: true,
+                open: false
               })
 
             } else {
+              that.setState({
+                loading: false,
+                errMsg: '豆瓣没有该ISBN书籍数据'
+              })
+
               this.setState({
                 errorState: true,
-                loading: false
               })
             }
           })
           .catch(err => {
-            // what will cause this error?
-            console.log(err)
-            this.setState({
-              errorState: true,
-              loading: false
+            // console.log(err)
+            that.setState({
+              loading: false,
+              errMsg: err.message
             })
           })
       } else {
-        // isbn no valid
+        // isbn is not valid
+        that.setState({
+          loading: false,
+          open: false
+        })
+
         this.setState({
           errorState: true,
-          loading: false
         })
       }
     }
@@ -90,8 +105,12 @@ export default class App extends React.Component {
 
   saveInfo() {
     // save info
+    let that = this
     return function () {
-      // check info
+      that.setState({
+        loading: true,
+        open: true
+      })
       if (this.isBookInfoValid()) {
         ipcRenderer.send('save-data', this.state.isbn, {
           title: this.state.title,
@@ -101,6 +120,11 @@ export default class App extends React.Component {
           number: this.state.number,
           owner: this.state.owner,
           coverUrl: this.state.coverUrl
+        })
+      } else {
+        that.setState({
+          loading: false,
+          open: false
         })
       }
     }
@@ -118,12 +142,13 @@ export default class App extends React.Component {
       console.log(reply)
       if (reply === 'success') {
         this.setState({
-          fetchSuccess: false
+          fetchSuccess: false,
+          open: false
         })
       } else {
-        // show dialog
         this.setState({
-          open: true
+          loading: false,
+          errMsg: '已存有该书籍信息'
         })
       }
     })
@@ -150,11 +175,22 @@ export default class App extends React.Component {
         }
         <Dialog
           open={this.state.open}
-          onClose={this.handleClose}
         >
           <DialogContent>
-            已经含有该数据
+            {
+              this.state.loading ? 
+              <CircularProgress size={24}/> :
+              <DialogContentText>{this.state.errMsg}</DialogContentText>
+            }
           </DialogContent>
+          { 
+            !this.state.loading && 
+            <DialogActions>
+              <Button variant="outlined" onClick = {this.handleClose}>
+                Cancel
+              </Button>
+            </DialogActions>
+          }
         </Dialog>
       </div>
     )

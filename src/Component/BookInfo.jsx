@@ -12,7 +12,7 @@ export default class BookInfo extends React.Component {
       ...this.props.bookInfo,
       ...{
         type: '',
-        number: '',
+        number: '1',
         owner: '',
         titleError: false,
         authorError: false,
@@ -32,13 +32,44 @@ export default class BookInfo extends React.Component {
   }
 
   handleChange = name => event => {
+    if (this.state[name + 'Error'] === true) {
+      this.setState({
+        [name + 'Error']: false
+      })
+    }
+
     this.setState({
       [name]: event.target.value.trim()
     })
   }
 
   isBookInfoValid () {
-    return true
+    console.log('check book info')
+    console.log(this.state.type)
+    console.log(this.state.number)
+    let errorName = ''
+    if (this.state.title === '') {
+      errorName = 'titleError'
+    } else if (this.state.author === '') {
+      errorName = 'authorError'
+    } else if (this.state.type === '') {
+      errorName = 'typeError'
+    } else if (isNaN(this.state.number) || this.state.number === '') {
+      errorName = 'numberError'
+    } else if (this.state.coverUrl === '') {
+      // check coverUrl is valid
+      errorName = 'coverUrlError'
+    }
+
+    console.log(errorName)
+    if (errorName !== '') {
+      this.setState({
+        [errorName]: true
+      })
+      return false
+    } else {
+      return true
+    }
   }
 
   render() {
@@ -49,6 +80,7 @@ export default class BookInfo extends React.Component {
           id='title'
           label='书名'
           value={this.state.title}
+          error={this.state.titleError}
           onChange={this.handleChange('title')}
           margin="normal"
         />
@@ -56,6 +88,7 @@ export default class BookInfo extends React.Component {
           id='author'
           label='作者'
           value={this.state.author}
+          error={this.state.authorError}
           onChange={this.handleChange('author')}
           margin="normal"
         />
@@ -72,6 +105,7 @@ export default class BookInfo extends React.Component {
           label='类型'
           select
           value={this.state.type}
+          error={this.state.typeError}
           onChange={this.handleChange('type')}
           margin='normal'
         >
@@ -86,6 +120,7 @@ export default class BookInfo extends React.Component {
           label='数量'
           type='number'
           value={this.state.number}
+          error={this.state.numberError}
           onChange={this.handleChange('number')}
           margin='normal'
         />
@@ -100,6 +135,7 @@ export default class BookInfo extends React.Component {
           id='coverUrl'
           label='封面链接'
           value={this.state.coverUrl}
+          error={this.state.coverUrlError}
           onChange={this.handleChange('coverUrl')}
           margin="normal"
         />
