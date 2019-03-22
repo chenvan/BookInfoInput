@@ -11,11 +11,10 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
+import scrape from './Lib/scrape'
+
 const electron = window.require('electron')
 const ipcRenderer = electron.ipcRenderer
-
-const doubanAPI = 'https://api.douban.com/v2/book/isbn'
-const fetch = require('node-fetch') 
 
 export default class App extends React.Component {
   constructor(props) {
@@ -34,6 +33,7 @@ export default class App extends React.Component {
     this.saveInfo = this.saveInfo.bind(this)
     this.cancel = this.cancel.bind(this)
     this.handleClose = this.handleClose.bind(this)
+    this.toBookInfo = this.toBookInfo.bind(this)
   }
 
   handleClose() {
@@ -53,42 +53,23 @@ export default class App extends React.Component {
       })
 
       if (this.isIsbnValid(this.state.isbn)) {
-        fetch(`${doubanAPI}/${this.state.isbn}`)
-          .then(res => res.json())
-          .then(info => {
-            // console.log(info)
-            if (info.title) {
-              that.bookInfo = {
-                isbn: this.state.isbn,
-                title: info.title,
-                author: info.author.map(author => author.replace(/\s+/g, '')).join(', '), //info.author is an array
-                summary: info.summary,
-                coverUrl: info.images.small,
-              }
-  
-              that.setState({
-                fetchSuccess: true,
-                open: false
-              })
-
-            } else {
-              that.setState({
-                loading: false,
-                errMsg: '豆瓣没有该ISBN书籍数据'
-              })
-
-              this.setState({
-                errorState: true,
-              })
-            }
+        scrape(this.state.isbn).then(data => {
+          that.bookInfo = {
+            isbn: this.state.isbn,
+            ...data
+          }
+      
+          that.setState({
+            fetchSuccess: true,
+            open: false
           })
-          .catch(err => {
-            // console.log(err)
-            that.setState({
-              loading: false,
-              errMsg: err.message
-            })
+        }).catch(err => {
+          // console.log(err)
+          that.setState({
+            loading: false,
+            errMsg: err.message
           })
+        })
       } else {
         // isbn is not valid
         that.setState({
@@ -130,7 +111,22 @@ export default class App extends React.Component {
     }
   }
 
-  cancel() {
+  toBookInfo () {
+    this.bookInfo = {
+      isbn: '',
+      title: '',
+      author: '',
+      summary: '',
+      coverUrl: ''
+    }
+
+    this.setState({
+      fetchSuccess: true,
+      open: false
+    })
+  }
+
+  cancel () {
     this.setState({
       fetchSuccess: false
     })
@@ -171,6 +167,7 @@ export default class App extends React.Component {
             :
           <IsbnInput 
             fetchInfo = {this.fetchInfo()}
+            toBookInfo = {this.toBookInfo}
           />
         }
         <Dialog

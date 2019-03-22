@@ -3,12 +3,19 @@
 }
 
 #isbn-form {
-  justify-content: center;
-  align-items: baseline;
-  margin-top: 160px;
+  flex-direction: column;
+  align-items: center;
+  
 }
 
-#isbn-form button {
+#isbn-input {
+  /* align-items: baseline; */
+  display: flex;
+  align-items: baseline;
+  margin: 160px 0 60px;
+}
+
+#isbn-input button {
   margin-left: 16px;
 }
 

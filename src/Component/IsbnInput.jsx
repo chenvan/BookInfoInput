@@ -33,19 +33,28 @@ export default class IsbnInput extends React.Component {
   render() {
     return (
       <div id='isbn-form'>
-        <TextField
-          id='isbn'
-          label='isbn号'
-          value={this.state.isbn}
-          error={this.state.errorState}
-          onChange={this.handleChange}
-          margin="normal"
-        />
-        <Button 
-          variant="outlined"
-          onClick = {this.fetchInfo}
+        <div id='isbn-input'>
+          <TextField
+            id='isbn'
+            label='isbn号'
+            value={this.state.isbn}
+            error={this.state.errorState}
+            onChange={this.handleChange}
+            margin="normal"
+          />
+          <Button 
+            variant="contained"
+            color="primary"
+            onClick = {this.fetchInfo}
+          >
+            获取
+          </Button>
+        </div>
+        <Button
+          onClick = {this.props.toBookInfo}
+          variant="contained"
         >
-          获取
+            手动输入书籍信息
         </Button>
       </div>
     )

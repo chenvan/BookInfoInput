@@ -2,6 +2,10 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
+
+const electron = window.require('electron')
+const ipcRenderer = electron.ipcRenderer
+const bookType = ipcRenderer.sendSync('get-bookType')
  
 export default class BookInfo extends React.Component {
   constructor(props) {
@@ -21,11 +25,7 @@ export default class BookInfo extends React.Component {
       }
     }
 
-    this.bookType = [
-      '小说',
-      '写真',
-      '童话'
-    ]
+    // this.bookType = store.get('bookType')
 
     this.saveInfo = this.props.saveInfo.bind(this)
   }
@@ -44,7 +44,7 @@ export default class BookInfo extends React.Component {
 
   isBookInfoValid () {
     let errorName = ''
-    let doubanImgRe = /https:\/\/img1.doubanio.com\/view\/subject\/s\/public\/.*/
+    let doubanImgRe = /https:\/\/img1.doubanio.com\/.*/
 
     if (this.state.title === '') {
       errorName = 'titleError'
@@ -91,7 +91,7 @@ export default class BookInfo extends React.Component {
           onChange={this.handleChange('type')}
           margin='normal'
         >
-          {this.bookType.map(option => (
+          {bookType.map(option => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
@@ -134,7 +134,7 @@ export default class BookInfo extends React.Component {
           onChange={this.handleChange('summary')}
           margin="normal"
         />
-        <img src={this.state.coverUrl} alt="封面" />
+        <img src={this.state.coverUrl} alt="封面" referrerPolicy ="never"/>
         <TextField
           id='coverUrl'
           label='封面链接'

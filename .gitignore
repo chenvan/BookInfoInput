@@ -26,3 +26,4 @@ yarn-error.log*
 #
 book_test_data.txt
 db.json
+config.json

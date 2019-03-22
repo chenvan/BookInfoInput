@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.1.1",
+    "cheerio": "^1.0.0-rc.2",
     "lowdb": "^1.0.0",
     "node-fetch": "^2.2.0",
     "react": "^16.5.2",
@@ -22,7 +23,7 @@
     "eject": "react-scripts eject",
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "react-start": "react-scripts start",
-    "pack": "build --dir",
+    "pack": "electron-builder -w --ia32 --dir",
     "dist": "npm run build && build",
     "postinstall": "install-app-deps"
   },

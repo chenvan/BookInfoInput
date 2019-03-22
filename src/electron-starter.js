@@ -8,9 +8,12 @@ const url = require('url')
 
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
-const adapter = new FileSync('db.json')
-const db = low(adapter)
+const adapter_db = new FileSync('db.json')
+const adapter_config = new FileSync('config.json')
+const db = low(adapter_db)
+const config = low(adapter_config)
 
+config.defaults({'bookType': ['小说']}).write()
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -81,4 +84,8 @@ ipcMain.on('save-data', (event, isbn, data) => {
         db.set(isbn, data).write()
         event.sender.send('save-data-reply', 'success')
     }  
+})
+
+ipcMain.once('get-bookType', event => {
+    event.returnValue = config.get('bookType').value()
 })
