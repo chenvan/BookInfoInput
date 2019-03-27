@@ -25,8 +25,6 @@ export default class BookInfo extends React.Component {
       }
     }
 
-    // this.bookType = store.get('bookType')
-
     this.saveInfo = this.props.saveInfo.bind(this)
   }
 

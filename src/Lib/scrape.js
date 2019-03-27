@@ -26,11 +26,15 @@ function getTitle ($) {
 }
 
 function getCoverUrl ($) {
-  return $('#mainpic a img').attr("src").trim()
+  // img 要低像素的
+  let coverUrl = $('#mainpic a img').attr("src").trim()
+  return coverUrl.replace(/\/l\//, '\/s\/')
 }
 
 function getSummary ($) {
-  return $('#link-report .intro').last().text().trim()
+  return $('#link-report .intro').last().find('p').map((i, el) => {
+    return $(el).text().trim()
+  }).get().join('\n')
 }
 
 function scrape(isbn) {
@@ -51,3 +55,4 @@ function scrape(isbn) {
 }
 
 export default scrape
+// module.exports = scrape // for run test_scrape under node

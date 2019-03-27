@@ -24,7 +24,7 @@
     "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
     "react-start": "react-scripts start",
     "pack": "electron-builder -w --ia32 --dir",
-    "dist": "npm run build && build",
+    "dist": "npm run build && build -w --ia32 --dir",
     "postinstall": "install-app-deps"
   },
   "build": {
