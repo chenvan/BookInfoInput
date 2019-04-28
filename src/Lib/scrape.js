@@ -25,10 +25,10 @@ function getTitle ($) {
   return $('#wrapper h1 span').text().trim()
 }
 
-function getCoverUrl ($) {
+function getCover ($) {
   // img 要低像素的
   let coverUrl = $('#mainpic a img').attr("src").trim()
-  return coverUrl.replace(/\/l\//, '\/s\/')
+  return coverUrl.replace(/\/l\//, '/s/')
 }
 
 function getSummary ($) {
@@ -49,7 +49,7 @@ function scrape(isbn) {
       title: getTitle($),
       author: getAuthor($),
       summary: getSummary($),
-      coverUrl: getCoverUrl($)
+      cover: getCover($)
     }
   })
 }

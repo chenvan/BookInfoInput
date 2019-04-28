@@ -27,7 +27,7 @@ export default class IsbnInput extends React.Component {
   }
 
   isIsbnValid (isbn) {
-    return isbn.length === 13 && !isNaN(isbn)
+    return (isbn.length === 13 || isbn.length === 10) && !isNaN(isbn)
   }
 
   render() {
@@ -50,12 +50,6 @@ export default class IsbnInput extends React.Component {
             获取
           </Button>
         </div>
-        <Button
-          onClick = {this.props.toBookInfo}
-          variant="contained"
-        >
-            手动输入书籍信息
-        </Button>
       </div>
     )
   }

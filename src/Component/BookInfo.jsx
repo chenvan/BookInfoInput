@@ -16,12 +16,12 @@ export default class BookInfo extends React.Component {
       ...{
         type: '',
         number: '1',
-        owner: '',
+        master: '',
         titleError: false,
         authorError: false,
         typeError: false,
         numberError: false,
-        coverUrlError: false
+        coverError: false
       }
     }
 
@@ -42,7 +42,7 @@ export default class BookInfo extends React.Component {
 
   isBookInfoValid () {
     let errorName = ''
-    let doubanImgRe = /https:\/\/img1.doubanio.com\/.*/
+    let doubanImgRe = /https:\/\/.*.doubanio.com\/.*/
 
     if (this.state.title === '') {
       errorName = 'titleError'
@@ -52,8 +52,8 @@ export default class BookInfo extends React.Component {
       errorName = 'typeError'
     } else if (isNaN(this.state.number) || this.state.number === '') {
       errorName = 'numberError'
-    } else if (!doubanImgRe.test(this.state.coverUrl)) {
-      errorName = 'coverUrlError'
+    } else if (!doubanImgRe.test(this.state.cover)) {
+      errorName = 'coverError'
     }
 
     // console.log(errorName)
@@ -66,17 +66,17 @@ export default class BookInfo extends React.Component {
       return true
     }
   }
-
+  
   render() {
     return (
       <div id='book-info-form'>
         <div id="book-isbn">{'ISBN: ' + this.state.isbn}</div>
         <TextField 
-          id='owner'
+          id='master'
           label='书主'
           className='short'
-          value={this.state.owner}
-          onChange={this.handleChange('owner')}
+          value={this.state.master}
+          onChange={this.handleChange('master')}
           margin='normal'
         />
         <TextField 
@@ -132,14 +132,14 @@ export default class BookInfo extends React.Component {
           onChange={this.handleChange('summary')}
           margin="normal"
         />
-        <img src={this.state.coverUrl} alt="封面" referrerPolicy ="never"/>
+        <img src={this.state.cover} alt="封面" referrerPolicy ="never"/>
         <TextField
-          id='coverUrl'
+          id='cover'
           label='封面链接'
           className='long'
-          value={this.state.coverUrl}
-          error={this.state.coverUrlError}
-          onChange={this.handleChange('coverUrl')}
+          value={this.state.cover}
+          error={this.state.coverError}
+          onChange={this.handleChange('cover')}
           margin="normal"
         />
         <div id='button-zone'>

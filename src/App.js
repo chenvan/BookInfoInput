@@ -33,7 +33,6 @@ export default class App extends React.Component {
     this.saveInfo = this.saveInfo.bind(this)
     this.cancel = this.cancel.bind(this)
     this.handleClose = this.handleClose.bind(this)
-    this.toBookInfo = this.toBookInfo.bind(this)
   }
 
   handleClose() {
@@ -98,9 +97,10 @@ export default class App extends React.Component {
           author: this.state.author,
           summary: this.state.summary,
           type: this.state.type,
-          number: this.state.number,
-          owner: this.state.owner,
-          coverUrl: this.state.coverUrl
+          total_num: this.state.number,
+          can_borrow_num: this.state.number,
+          master: this.state.master,
+          cover: this.state.cover
         })
       } else {
         that.setState({
@@ -111,27 +111,11 @@ export default class App extends React.Component {
     }
   }
 
-  toBookInfo () {
-    this.bookInfo = {
-      isbn: '',
-      title: '',
-      author: '',
-      summary: '',
-      coverUrl: ''
-    }
-
-    this.setState({
-      fetchSuccess: true,
-      open: false
-    })
-  }
-
   cancel () {
     this.setState({
       fetchSuccess: false
     })
   }
-
 
   componentDidMount() {
     ipcRenderer.on('save-data-reply', (event, reply) => {
@@ -167,7 +151,7 @@ export default class App extends React.Component {
             :
           <IsbnInput 
             fetchInfo = {this.fetchInfo()}
-            toBookInfo = {this.toBookInfo}
+            // toBookInfo = {this.toBookInfo}
           />
         }
         <Dialog
