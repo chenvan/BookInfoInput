@@ -11,8 +11,6 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-import scrape from './Lib/scrape'
-
 const electron = window.require('electron')
 const ipcRenderer = electron.ipcRenderer
 
@@ -29,89 +27,43 @@ export default class App extends React.Component {
 
     this.bookInfo = {}
 
-    this.fetchInfo = this.fetchInfo.bind(this)
-    this.saveInfo = this.saveInfo.bind(this)
-    this.cancel = this.cancel.bind(this)
-    this.handleClose = this.handleClose.bind(this)
   }
 
-  handleClose() {
+  handleClose = () => {
     this.setState({
       open: false
     })
   }
-  
-  fetchInfo () {
-    let that = this
 
-    return function () {
-      
-      that.setState({
-        loading: true,
-        open: true,
+  openLoading = () => {
+    this.setState({
+      loading: true,
+      open: true
+    })
+  }
+
+  onSuccess = (from, data) => {
+    if (from === 'isbn') {
+      this.bookInfo = data
+
+      this.setState({
+        fetchSuccess: true,
+        open: false
       })
-
-      if (this.isIsbnValid(this.state.isbn)) {
-        scrape(this.state.isbn).then(data => {
-          that.bookInfo = {
-            isbn: this.state.isbn,
-            ...data
-          }
-      
-          that.setState({
-            fetchSuccess: true,
-            open: false
-          })
-        }).catch(err => {
-          // console.log(err)
-          that.setState({
-            loading: false,
-            errMsg: err.message
-          })
-        })
-      } else {
-        // isbn is not valid
-        that.setState({
-          loading: false,
-          open: false
-        })
-
-        this.setState({
-          errorState: true,
-        })
-      }
+    } else if (from === 'save') {
+      // console.log(data)
+      ipcRenderer.send('save-data', data)
     }
   }
 
-  saveInfo() {
-    // save info
-    let that = this
-    return function () {
-      that.setState({
-        loading: true,
-        open: true
-      })
-      if (this.isBookInfoValid()) {
-        ipcRenderer.send('save-data', this.state.isbn, {
-          title: this.state.title,
-          author: this.state.author,
-          summary: this.state.summary,
-          type: this.state.type,
-          total_num: this.state.number,
-          can_borrow_num: this.state.number,
-          master: this.state.master,
-          cover: this.state.cover
-        })
-      } else {
-        that.setState({
-          loading: false,
-          open: false
-        })
-      }
-    }
+  onError = err => {
+    this.setState({
+      loading: false,
+      errMsg: err ? err.message : '出错'
+    })
   }
 
-  cancel () {
+  navigateBack = () => {
     this.setState({
       fetchSuccess: false
     })
@@ -144,14 +96,17 @@ export default class App extends React.Component {
         {
           this.state.fetchSuccess ?
           <BookInfo 
-            bookInfo = {this.bookInfo}
-            saveInfo={this.saveInfo()}
-            cancel={this.cancel}
+            bookInfo={this.bookInfo}
+            onSuccess={this.onSuccess}
+            onError={this.onError}
+            navigateBack={this.navigateBack}
+            openLoading={this.openLoading}
           />
             :
           <IsbnInput 
-            fetchInfo = {this.fetchInfo()}
-            // toBookInfo = {this.toBookInfo}
+            onSuccess={this.onSuccess}
+            onError={this.onError}
+            openLoading={this.openLoading}
           />
         }
         <Dialog

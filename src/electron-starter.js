@@ -8,26 +8,14 @@ const url = require('url')
 
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
-const adapter_config = new FileSync('config.json')
-const config = low(adapter_config)
-config.defaults({'bookType': ['小说']}).write()
-
-const createCsvWriter = require('csv-writer').createObjectCsvWriter
-const csvWriter = createCsvWriter({
-    path: './db.csv',
-    header: [
-        { id: 'isbn', title: 'isbn'},
-        { id: 'title', title: 'title'},
-        { id: 'author', title: 'author'},
-        { id: 'summary', title: 'summary'},
-        { id: 'cover', title: 'cover'},
-        { id: 'type', title: 'book_type'},
-        { id: 'total_num', title: 'total_num'},
-        { id: 'can_borrow_num', title: 'can_borrow_num'},
-        { id: 'master', title: 'master'},
-    ],
-    append: true
+const adapter_db = new FileSync('db.json', {
+    defaultValue: []
 })
+const adapter_config = new FileSync('config.json', {
+    defaultValue: {'bookType': ['小说']}
+})
+const db = low(adapter_db)
+const config = low(adapter_config)
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -52,6 +40,7 @@ function createWindow() {
 
     // hardwire
     // const startUrl = 'http://localhost:3000'
+    console.log(startUrl)
 
     mainWindow.loadURL(startUrl);
     // Open the DevTools.
@@ -91,16 +80,15 @@ app.on('activate', function () {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 
-ipcMain.on('save-data', (event, isbn, data) => {
-    csvWriter.writeRecords([{
-        isbn: isbn,
-        ...data
-    }]).then( _ => {
-        event.sender.send('save-data-reply', 'success')
-    }).catch(err => {
+ipcMain.on('save-data', (event, data) => {
+    
+    try {
+        db.push(data).write()
+        event.sender.send('save-data-reply', 'success') 
+    } catch(err) {
         console.log(err)
         event.sender.send('save-data-reply', 'fail') 
-    })
+    }
 })
 
 ipcMain.once('get-bookType', event => {

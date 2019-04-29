@@ -2,6 +2,8 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 
+import scrape from '../lib/scrape'
+
 export default class IsbnInput extends React.Component {
   constructor(props) {
     super(props)
@@ -10,8 +12,6 @@ export default class IsbnInput extends React.Component {
       isbn: '', 
       errorState: false
     }
-
-    this.fetchInfo = this.props.fetchInfo.bind(this)
   }
 
   handleChange = event => {
@@ -26,8 +26,30 @@ export default class IsbnInput extends React.Component {
     })
   }
 
-  isIsbnValid (isbn) {
+  isIsbnValid =  isbn => {
     return (isbn.length === 13 || isbn.length === 10) && !isNaN(isbn)
+  }
+
+  fetchInfo = () => {
+    this.props.openLoading && this.props.openLoading()
+
+    if (this.isIsbnValid(this.state.isbn)) {
+      scrape(this.state.isbn).then(data => {
+        this.props.onSuccess && this.props.onSuccess('isbn', {
+            isbn: this.state.isbn,
+            ...data
+          }
+        )
+      }).catch(err => {
+        this.props.onError && this.props.onError(err)
+      })
+    } else {
+      this.props.onError && this.props.onError()
+      
+      this.setState({
+        errorState: true,
+      })
+    }
   }
 
   render() {

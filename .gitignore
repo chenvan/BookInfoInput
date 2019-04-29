@@ -24,6 +24,5 @@ yarn-debug.log*
 yarn-error.log*
 
 #
-book_test_data.txt
-db.csv
+db.json
 config.json

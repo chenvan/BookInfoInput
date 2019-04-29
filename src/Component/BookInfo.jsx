@@ -24,8 +24,6 @@ export default class BookInfo extends React.Component {
         coverError: false
       }
     }
-
-    this.saveInfo = this.props.saveInfo.bind(this)
   }
 
   handleChange = name => event => {
@@ -64,6 +62,31 @@ export default class BookInfo extends React.Component {
       return false
     } else {
       return true
+    }
+  }
+
+
+  navigateBack = () => {
+    this.props.navigateBack && this.props.navigateBack()
+  }
+
+  saveInfo = () => {
+    this.props.openLoading && this.props.openLoading()
+
+    if (this.isBookInfoValid()) {
+      this.props.onSuccess && this.props.onSuccess('save', {
+        isbn: this.state.isbn,
+        title: this.state.title,
+        author: this.state.author,
+        summary: this.state.summary,
+        type: this.state.type,
+        total_num: this.state.number,
+        can_borrow_num: this.state.number,
+        master: this.state.master,
+        cover: this.state.cover
+      })
+    } else {
+      this.props.onError && this.props.onError()
     }
   }
   
@@ -151,7 +174,7 @@ export default class BookInfo extends React.Component {
           </Button>
           <Button
             variant="outlined"
-            onClick={this.props.cancel}
+            onClick={this.navigateBack}
           >
             取消
           </Button>
