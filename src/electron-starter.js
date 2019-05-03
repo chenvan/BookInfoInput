@@ -35,17 +35,15 @@ function createWindow() {
         pathname: path.join(__dirname, '/../build/index.html'),
         protocol: 'file:',
         slashes: true
-    });
-
-
-    // hardwire
-    // const startUrl = 'http://localhost:3000'
-    console.log(startUrl)
+    })
 
     mainWindow.loadURL(startUrl);
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
-
+    if (process.env.ELECTRON_START_URL) {
+        console.log(startUrl)
+        mainWindow.webContents.openDevTools();
+    }
+    
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows
