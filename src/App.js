@@ -1,8 +1,8 @@
 import React from 'react'
 
 import './App.css'
-import IsbnInput from './Component/IsbnInput'
-import BookInfo from './Component/BookInfo'
+import IsbnInput from './component/IsbnInput'
+import BookInfo from './component/BookInfo'
 
 import Button from '@material-ui/core/Button'
 import Dialog from '@material-ui/core/Dialog'
@@ -11,7 +11,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import DialogContentText from '@material-ui/core/DialogContentText'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
-const electron = window.require('electron')
+const electron = window.electron
 const ipcRenderer = electron.ipcRenderer
 
 export default class App extends React.Component {
@@ -22,11 +22,11 @@ export default class App extends React.Component {
       fetchSuccess: false,
       loading: false,
       open: false,
-      errMsg: '出错'
+      errMsg: '出错',
     }
 
+    this.bookType = ipcRenderer.sendSync('get-bookType')
     this.bookInfo = {}
-
   }
 
   handleClose = () => {
@@ -97,6 +97,7 @@ export default class App extends React.Component {
           this.state.fetchSuccess ?
           <BookInfo 
             bookInfo={this.bookInfo}
+            bookType={this.bookType}
             onSuccess={this.onSuccess}
             onError={this.onError}
             navigateBack={this.navigateBack}

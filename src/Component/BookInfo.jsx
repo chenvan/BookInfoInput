@@ -3,10 +3,6 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
 
-const electron = window.require('electron')
-const ipcRenderer = electron.ipcRenderer
-const bookType = ipcRenderer.sendSync('get-bookType')
- 
 export default class BookInfo extends React.Component {
   constructor(props) {
     super(props)
@@ -25,6 +21,7 @@ export default class BookInfo extends React.Component {
       }
     }
   }
+
 
   handleChange = name => event => {
     if (this.state[name + 'Error']) {
@@ -112,7 +109,7 @@ export default class BookInfo extends React.Component {
           onChange={this.handleChange('type')}
           margin='normal'
         >
-          {bookType.map(option => (
+          {this.props.bookType.map(option => (
             <MenuItem key={option} value={option}>
               {option}
             </MenuItem>
@@ -155,7 +152,7 @@ export default class BookInfo extends React.Component {
           onChange={this.handleChange('summary')}
           margin="normal"
         />
-        <img src={this.state.cover} alt="封面" referrerPolicy ="never"/>
+        <img src={this.state.cover} alt="封面"/>
         <TextField
           id='cover'
           label='封面链接'

@@ -1,41 +1,60 @@
 {
-  "name": "book_info_input",
-  "version": "0.1.0",
+  "name": "book-info-input",
+  "version": "2.0.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^3.1.1",
-    "cheerio": "^1.0.0-rc.2",
+    "@material-ui/core": "^3.9.3",
+    "cheerio": "^1.0.0-rc.3",
+    "electron-is-dev": "^1.1.0",
     "lowdb": "^1.0.0",
-    "node-fetch": "^2.2.0",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
-    "react-scripts": "1.1.5"
+    "node-fetch": "^2.5.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-scripts": "3.0.0"
   },
-  "devDependencies": {
-    "electron": "^3.0.2",
-    "electron-builder": "^20.28.4",
-    "foreman": "^3.0.1"
-  },
+  "main": "public/electron.js",
   "homepage": "./",
-  "main": "src/electron-starter.js",
   "scripts": {
+    "react-start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron .",
-    "electron-dev": "set ELECTRON_START_URL=http://localhost:3000 && electron .",
-    "electron-start": "node src/electron-wait-react",
-    "react-start": "react-scripts start",
-    "pack": "electron-builder -w --ia32 --dir",
-    "dist": "npm run build && build -w --ia32 --dir",
-    "postinstall": "install-app-deps",
-    "start": "nf start -p 3000"
+    "electron-start": "nodemon --watch ./public/electron.js --exec yarn electron",
+    "dev": "concurrently \"yarn react-start\" \"wait-on http://localhost:3000 && yarn electron-start\"",
+    "dist": "yarn build && build",
+    "dist-win32": "yarn build && build -w --ia32"
   },
   "build": {
-    "appId": "com.electron.bookInfoInput",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
     "directories": {
-      "buildResources": "public"
-    },
-    "extends": null
+      "buildResources": "assets"
+    }
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "electron": "^5.0.0",
+    "electron-builder": "^20.39.0",
+    "nodemon": "^1.19.0",
+    "typescript": "^3.4.5",
+    "wait-on": "^3.2.0"
   }
 }
